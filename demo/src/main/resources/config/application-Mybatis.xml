@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:component-scan base-package="com.yzy"></context:component-scan>
+
+    <bean id="dataSource"  class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url"  value="jdbc:mysql://127.0.0.1:13306/electricgroupdb?characterEncoding=utf8" />
+        <property name="username" value="root" />
+        <property name="password" value="123456789" />
+    </bean>
+
+    <!-- 配置会话工厂bean -->
+    <bean id="sqlSessionFactory"  class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource" />
+        <!-- 给实体类取别名，这样配置可以只需要写类名，不需要带类完整路径，简化映射文件中的返回类型resultType书写(可能其他地方还有用到) -->
+        <property name="typeAliasesPackage" value="com.yzy" />
+        <!-- 指定sql映射文件路径 -->
+        <property name="mapperLocations"  value="classpath*:mapping/*/*Mapper.xml" />
+    </bean>
+
+    <!-- 配置自动扫描对象关系映射文件 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 指定会话工厂，如配置中只有一个则可省去 -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"  />
+        <!-- 指定要自动扫描的包，不带类名，表示扫描工程下所有在这一层下面的接口，所以为了方便，尽量把所有映射接口都放在同一包下 -->
+        <property name="basePackage" value="com.yzy" />
+    </bean>
+</beans>

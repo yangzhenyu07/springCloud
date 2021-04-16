@@ -1,0 +1,34 @@
+spring:
+  redis:
+    serialize: JSON
+    expire: 86400-172801 # redis缓存默认存活周期
+    # 格式 ip+端口以,分割
+    # host一个的时候为单机，多个的时候为集群
+    # 主备的时候，主节点为第一个，后续为备用节点
+    address: 127.0.0.1:6379
+    password:
+    database: 3
+    timeout: 3000
+    # 连接池配置
+    pool:
+      max-idle: 17
+      min-idle: 8
+      max-active: 20
+      max-wait: 3000
+      conn-timeout: 3000
+      so-timeout: 3000
+      size: 64
+    # 集群配置
+    cluster:
+      scan-interval: 1000
+      read-mode: SLAVE
+      retry-attempts: 3
+      failed-attempts: 3
+      slave-connection-pool-size: 64
+      master-connection-pool-size: 64
+      retry-interval: 1500
+    sentinel:
+      master: master # redis为哨兵模式时，添加master。否则注释掉master
+      read-mode: SLAVE
+      master-onlyWrite: true
+      fail-max: 3

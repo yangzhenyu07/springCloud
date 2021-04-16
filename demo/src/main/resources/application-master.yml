@@ -1,0 +1,158 @@
+server:
+  port: 13145  # 默认端口
+  tomcat:
+    uri-encoding: UTF-8 # 默认编码
+eureka:
+  instance:
+    prefer-ip-address: true # 优先ip注册
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka # 注册中心地址
+  down:
+    url: http://127.0.0.1:19001/actuator/service-registry?status=DOWN
+spring:
+  application:
+    name: testDemo # 项目名称
+  servlet:
+    multipart:    #上传配置
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+  session:           #session 超时设置
+    timeout: 1800
+  sgrain: #异步线程池
+    async-thread-pool:
+      enable: true  #异步线程池组件开关，默认false
+      corePoolSize: 5 #核心线程数,默认：Java虚拟机可用线程数
+      maxPoolSize: 10  #线程池最大线程数,默认：40000
+      queueCapacity: 25  #线程队列最大线程数,默认：80000
+      threadNamePrefix: yzy-Async-ThreadPool- #自定义线程名前缀，默认：Async-ThreadPool-
+      keepAliveSeconds: 300 #线程池中线程最大空闲时间，默认：60，单位：秒
+      allowCoreThreadTimeOut: false #核心线程是否允许超时，默认false
+      waitForTasksToCompleteOnShutdown: false #IOC容器关闭时是否阻塞等待剩余的任务执行完成，默认:false（必须设置setAwaitTerminationSeconds）
+      awaitTerminationSeconds: 10 #阻塞IOC容器关闭的时间，默认：10秒（必须设置setWaitForTasksToCompleteOnShutdown）
+  main:
+    allow-bean-definition-overriding: true #允许多个feign bean 存在
+  datasource:
+    dynamic: # druid连接池配置
+      primary: master #默认数据源
+      datasource:
+        master: #主库配置
+          username: YZY@7808423C343F447E85D1E0167DA1D0D3  #TESTDB
+          password: YZY@7808423C343F447E85D1E0167DA1D0D3  #TESTDB
+          driver-class-name: ${datasource_driver_class_name:com.mysql.cj.jdbc.Driver}
+          url: ${datasource_url:jdbc:mysql://127.0.0.1:3306/TESTDB?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+          druid:
+            initial-size: 5 #启动程序时，在连接池中初始化多少个连接
+            max-active: 20 #连接池中最多支持多少个活动会话
+            min-idle: 5 #回收空闲连接时，将保证至少有minIdle个连接
+            max-wait: 60000 #程序向连接池中请求连接时,超过maxWait的值后，认为本次请求失败，即连接池
+            filters: stat,wall,slf4j
+        slave: #从库配置
+          username: YZY@7808423C343F447E85D1E0167DA1D0D3  #TESTDB
+          password: YZY@7808423C343F447E85D1E0167DA1D0D3  #TESTDB
+          driver-class-name: ${datasource_driver_class_name:com.mysql.cj.jdbc.Driver}
+          url: ${datasource_url:jdbc:mysql://127.0.0.1:3306/TESTDB?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+          druid:
+            initial-size: 5 #启动程序时，在连接池中初始化多少个连接
+            max-active: 20 #连接池中最多支持多少个活动会话
+            min-idle: 5 #回收空闲连接时，将保证至少有minIdle个连接
+            max-wait: 60000 #程序向连接池中请求连接时,超过maxWait的值后，认为本次请求失败，即连接池
+            filters: stat,wall,slf4j
+  redis:
+    host: 127.0.0.1
+    port: 6379
+mybatis-plus:
+  global-config:
+    db-config:
+      #逻辑已删除值
+      logic-delete-value: 1
+      #逻辑未删除值
+      logic-not-delete-value: 0
+    sql-parser-cache: true # 是否缓存 Sql 解析，默认不缓存
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-enums-package: com.yzy.demo.*
+  mapper-locations: classpath*:mapping/*/*Mapper.xml  #MyBatis Mapper 所对应的 XML 文件位置
+config:
+  session:
+    timeOut: 5 #缓存的超时时间
+    sessionTimeOut: 2 #分布式 sessionId 的超时时间
+    sessionKey: SESSION_KEY #存放cookie的sessionId的key值
+    head: yzy_ #缓存中的命名前缀【防缓存雪崩设计】
+  log:
+    flag: true
+    filter: com.yzy,com.baomidou.mybatisplus
+  configLoad: config
+  decrypt:
+    key: Yzy@1995217 #配置文件秘钥
+  scheduled:
+    flag: false
+    work_one: 0/5 * * * * ?
+  audit:
+    log:
+      filter: 'com.yzy.demo'
+  cors: true #处理ajax 跨域请求
+  file:
+    type: fastdfs
+    fastdfs:
+      groupName: group1
+  tomcat:
+    request: false # 开启请求类型拦截
+    request-method: PUT,DELETE,CONNECT,OPTIONS,PATCH,PROPFIND,PROPPATCH,MKCOL,COPY,MOVE,LOCK,UNLOCK,TRACE,HEAD   # 需要拦截的请求类型 默认拦截:PUT,DELETE,CONNECT,OPTIONS,PATCH,PROPFIND,PROPPATCH,MKCOL,COPY,MOVE,LOCK,UNLOCK,TRACE,HEAD
+  exception:
+    switch: true  #全局异常
+    stack: true
+    code: 9999
+    info: 系统繁忙,请稍后再试！
+  token:
+    time: 3600
+feign:
+  hystrix:
+    enabled: true # 开启使用熔断器
+  httpclient:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 10000 # 10s就超时
+        readTimeout: 10000 # 10s就超时
+ribbon:
+  ReadTimeout: 2000   #请求处理的超时时间，单位为毫秒
+  ConnectTimeout: 1000  #请求连接的超时时间，单位为毫秒
+  MaxAutoRetries: 2  #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数，默认为1次
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000 #设置超时限制时间，单位为毫秒
+fdfs:
+  # 链接超时
+  connect-timeout: 60
+  # 读取时间
+  so-timeout: 60
+  # 生成缩略图参数
+  thumb-image:
+    width: 150
+    height: 150
+  tracker-list: 192.168.60.23:22122
+#actuator端口
+management:
+  server:
+    port: 19001
+  #修改访问路径  2.0之前默认是/   2.0默认是 /actuator  可以通过这个属性值修改
+  endpoints:
+    web:
+      base-path: /actuator
+      #开放所有页面节点  默认只开启了health、info两个节点
+      exposure:
+        include: '*'
+  #显示健康具体信息  默认不会显示详细信息
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true  #启用shutdown端点，以便支持优雅停机

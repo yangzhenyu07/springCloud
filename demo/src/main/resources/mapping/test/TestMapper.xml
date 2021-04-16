@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yzy.demo.test.mapper.TestMapper">
+
+
+    <sql id="column">
+        ID,AGE,NAME
+    </sql>
+
+
+
+    <select id="queryData" resultType="com.yzy.demo.test.doMain.TestDomain"
+            parameterType="com.yzy.demo.test.vo.TestQuert">
+        select
+        <include refid="column" />
+        from TEST o
+        <where>
+                <if test='params.id != null and params.id !=""'>
+                and o.id = #{params.id,jdbcType = VARCHAR}
+            </if>
+
+        </where>
+    </select>
+
+</mapper>
