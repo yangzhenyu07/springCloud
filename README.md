@@ -6,7 +6,7 @@
 
 ## demo用到的技术点:
 ### 系统架构
-+ springBoot + springCloud + 日志组件logback-spring + 多配置 + 配置文件信息加密 + 多数据源 + swagger2 
++ springBoot + 日志组件logback-spring + 多配置 + 配置文件信息加密 + 多数据源 + swagger2 
 + mybatis-plus + 令牌token + 全局异常管理(自定义异常) + 统一返回数据拦截 + 跨域 + 异步线程池配置
 + 自定义编辑事务架构 + 公用日志设计 +  优雅启停 + 自定义配置集成
 ### 单机
