@@ -2,8 +2,6 @@ server:
   port: 13145  # 默认端口
   tomcat:
     uri-encoding: UTF-8 # 默认编码
-  servlet:
-    context-path: /test
 eureka:
   client:
     register-with-eureka: false
@@ -33,39 +31,6 @@ spring:
       awaitTerminationSeconds: 10 #阻塞IOC容器关闭的时间，默认：10秒（必须设置setWaitForTasksToCompleteOnShutdown）
   main:
     allow-bean-definition-overriding: true #允许多个feign bean 存在
-  redis:
-    serialize: JSON
-    expire: 86400-172801 # redis缓存默认存活周期
-    # 格式 ip+端口以,分割
-    # host一个的时候为单机，多个的时候为集群
-    # 主备的时候，主节点为第一个，后续为备用节点
-    address: 127.0.0.1:6379
-    password:
-    database: 3
-    timeout: 3000
-    # 连接池配置
-    pool:
-      max-idle: 17
-      min-idle: 8
-      max-active: 20
-      max-wait: 3000
-      conn-timeout: 3000
-      so-timeout: 3000
-      size: 64
-    # 集群配置
-    cluster:
-      scan-interval: 1000
-      read-mode: SLAVE
-      retry-attempts: 3
-      failed-attempts: 3
-      slave-connection-pool-size: 64
-      master-connection-pool-size: 64
-      retry-interval: 1500
-    sentinel:
-      master: master # redis为哨兵模式时，添加master。否则注释掉master
-      read-mode: SLAVE
-      master-onlyWrite: true
-      fail-max: 3
   datasource:
     dynamic: # druid连接池配置
       primary: master #默认数据源
@@ -92,6 +57,9 @@ spring:
             min-idle: 5 #回收空闲连接时，将保证至少有minIdle个连接
             max-wait: 60000 #程序向连接池中请求连接时,超过maxWait的值后，认为本次请求失败，即连接池
             filters: stat,wall,slf4j
+  redis:
+    host: 127.0.0.1
+    port: 6379
 mybatis-plus:
   global-config:
     db-config:
@@ -105,6 +73,14 @@ mybatis-plus:
   type-enums-package: com.yzy.demo.*
   mapper-locations: classpath*:mapping/*/*Mapper.xml  #MyBatis Mapper 所对应的 XML 文件位置
 config:
+  session:
+    timeOut: 5 #缓存的超时时间
+    sessionTimeOut: 2 #分布式 sessionId 的超时时间
+    sessionKey: SESSION_KEY #存放cookie的sessionId的key值
+    head: yzy_ #缓存中的命名前缀【防缓存雪崩设计】
+  log:
+    flag: true
+    filter: com.yzy,com.baomidou.mybatisplus
   configLoad: config
   decrypt:
     key: Yzy@1995217 #配置文件秘钥
@@ -165,14 +141,14 @@ fdfs:
 management:
   server:
     port: 19001
-#修改访问路径  2.0之前默认是/   2.0默认是 /actuator  可以通过这个属性值修改
+  #修改访问路径  2.0之前默认是/   2.0默认是 /actuator  可以通过这个属性值修改
   endpoints:
     web:
       base-path: /actuator
-#开放所有页面节点  默认只开启了health、info两个节点
+      #开放所有页面节点  默认只开启了health、info两个节点
       exposure:
         include: '*'
-#显示健康具体信息  默认不会显示详细信息
+  #显示健康具体信息  默认不会显示详细信息
   endpoint:
     health:
       show-details: always

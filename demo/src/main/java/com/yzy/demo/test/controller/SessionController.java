@@ -1,8 +1,11 @@
 package com.yzy.demo.test.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.yzy.demo.eventdrive.LoginProducer;
 import com.yzy.demo.utils.ResponseBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,13 +22,15 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping(value="/api/session")
 public class SessionController {
+    @Autowired
+    private LoginProducer loginProducer;
     /**
      * 登录
      * */
     @ApiOperation(value = "登录",notes = "生成sessionId 到前段cookie")
     @ResponseBody
     @PostMapping("/login")
-    public ResponseBo login(HttpSession session){
+    public ResponseBo login(HttpSession session) throws JsonProcessingException {
         String msg = "";
         //向域对象中添加数据
         session.setAttribute("userId","yangzhenyu");
@@ -33,6 +38,10 @@ public class SessionController {
         session.setMaxInactiveInterval(6000);
         //判断session是不是新的
         //session.getAttribute("userId") 从域对象中取数据
+        //===========================================================
+        //事件驱动模型测试
+        loginProducer.sendMsg("yangzhenyu");
+        //===========================================================
         if (session.isNew()){
             msg = "login success!\n userId:"+session.getAttribute("userId")+"\n"+"session id:"+session.getId();
             return ResponseBo.ok(msg);
