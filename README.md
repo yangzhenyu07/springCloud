@@ -3,6 +3,7 @@
 ## 前提:
 + mysql
 + jdk 1.8
++ springBoot + springCloud
 
 ## demo用到的技术点:
 ### 系统架构
@@ -11,7 +12,7 @@
 + 自定义编辑事务架构 + 公用日志设计 +  优雅启停 + 自定义配置集成
 ### 单机
 + 上传下载 + 全局参数校验 + 单机session模拟 + 单元测试(controller、service) + fastDFS集成练习
-+ 关闭挂钩 + AOP两种模式实现 + spring 事件监听设计 
++ 关闭挂钩 + AOP两种模式实现 + spring 事件驱动模型实战 + spring 事件监听 
 ### 分布式
 + springCloud + Feign + 熔断机制 + eureka +  单例应用 + db乐观锁设计 + 定时器任务设计[线程池+分布式锁]    
 + redis(字符串、列表、有序集合、无序集合、哈希存储)实战演示 + redis集群集成 + 缓存实战-防缓存雪崩设计 + 缓存实战-防缓存穿透设计 
