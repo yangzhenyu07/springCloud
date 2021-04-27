@@ -1,4 +1,4 @@
-package com.yzy.demo.common.redis;
+package com.yzy.demo.config.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

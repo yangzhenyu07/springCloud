@@ -57,6 +57,12 @@ spring:
             min-idle: 5 #回收空闲连接时，将保证至少有minIdle个连接
             max-wait: 60000 #程序向连接池中请求连接时,超过maxWait的值后，认为本次请求失败，即连接池
             filters: stat,wall,slf4j
+  rabbitmq: #RabbitMq 配置
+    virtual-host: /
+    host: 127.0.0.1  #IP
+    post: 5672  #提供服务时的端口
+    username: yzy #连接RabbitMQ的账户
+    password: yzy #连接RabbitMQ的密码
   redis:
     host: 127.0.0.1
     port: 6379
@@ -72,7 +78,26 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   type-enums-package: com.yzy.demo.*
   mapper-locations: classpath*:mapping/*/*Mapper.xml  #MyBatis Mapper 所对应的 XML 文件位置
+mq:
+  env: loacl #自定义变量，表示本地开发
+  yzy:
+    info:
+      queue:
+        name: ${mq.env}.middleware.mq.yzy.info.queue.byte  #队列名称 字节接受
+        name1: ${mq.env}.middleware.mq.yzy.info.queue.type  #队列名称 对象接受
+      exchange:
+        name: ${mq.env}.middleware.mq.yzy.info.exchange.byte  #交换机名称 字节接受
+        name1: ${mq.env}.middleware.mq.yzy.info.exchange.type  #交换机名称 对象接受
+      routing:
+        key:
+          name: ${mq.env}.middleware.mq.yzy.info.routing.key.byte  #路由名称 字节接受
+          name1: ${mq.env}.middleware.mq.yzy.info.routing.key.type  #路由名称 对象接受
 config:
+  rabbitmq:  #多个消费者实例配置，主要针对高并发业务场景配置
+    factory:
+      concurrentConsumers: 10  #设置并发消费者实例的初始值
+      maxConcurrentConsumers: 15  #设置并发消费者实例的最大数量
+      prefetchCount: 10  #置并发消费者实例中每个实例拉取的消息数量
   session:
     timeOut: 5 #缓存的超时时间
     sessionTimeOut: 2 #分布式 sessionId 的超时时间
