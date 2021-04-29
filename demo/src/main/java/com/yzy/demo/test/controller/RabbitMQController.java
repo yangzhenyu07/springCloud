@@ -3,6 +3,7 @@ package com.yzy.demo.test.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzy.demo.log.common.BaseLog;
+import com.yzy.demo.rabbitmq.fanout.publisher.FanoutPublisher;
 import com.yzy.demo.rabbitmq.test.publisher.SimpleBytePublisher;
 import com.yzy.demo.rabbitmq.test.publisher.SimpleObjectPublisher;
 import com.yzy.demo.test.vo.User;
@@ -34,6 +35,9 @@ public class RabbitMQController extends BaseLog {
     //基本消费模型-生产者-类型对象
     @Autowired
     private SimpleObjectPublisher simpleObjectPublisher;
+    //广播消费模型-生产者
+    @Autowired
+    private FanoutPublisher fanoutPublisher;
     @Autowired
     private ObjectMapper objectMapper;
     /**
@@ -74,6 +78,23 @@ public class RabbitMQController extends BaseLog {
         return ResponseBo.ok();
     }
 
-
+    /**
+     * 广播消费模型-生产者-字节流模式
+     * */
+    @ApiOperation(value = "广播消费模型-生产者-字节流模式演示",notes = "广播消费模型-生产者-字节流模式演示")
+    @ResponseBody
+    @PostMapping("/fanoutPublisher")
+    public ResponseBo fanoutPublisher(@RequestBody @Valid RabbitMqMsgVo vo) throws JsonProcessingException {
+        String msgValue = "fanoutPublisher";
+        long startTime = init(msgValue,objectMapper.writeValueAsString(vo));
+        try{
+            //注意:真实环境下要用事件异步驱动的方式发起消息
+            fanoutPublisher.sendMsg(vo.getMsg());
+            endLog(msgValue,startTime);
+        }catch (Exception e){
+            endLogError(msgValue,startTime,e);
+        }
+        return ResponseBo.ok();
+    }
 }
 

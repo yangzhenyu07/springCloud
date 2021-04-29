@@ -17,7 +17,7 @@
 + springCloud + Feign + 熔断机制 + eureka +  单例应用 + db乐观锁设计 + 定时器任务设计[线程池+分布式锁]    
 + redis(字符串、列表、有序集合、无序集合、哈希存储)实战演示 + redis集群集成 + 缓存实战-防缓存雪崩设计 + 缓存实战-防缓存穿透设计 
 + 分布式会话 + 项目启动预处理(缓存预热) + RabbitMQ普通消息模型(字节流和对象两种模式) + RabbitMQ消息确认
-+ RabbitMQ三种消息模型(基于DirectExchange交换机,基于TopicExchange的交换机,基于FanouExchange交换机)实战
++ RabbitMQ三种消息模型(广播消息模型,订阅消息模型,直连消息模型)实战
  
   
 

@@ -85,9 +85,14 @@ mq:
       queue:
         name: ${mq.env}.middleware.mq.yzy.info.queue.byte  #队列名称 字节接受
         name1: ${mq.env}.middleware.mq.yzy.info.queue.type  #队列名称 对象接受
+      fanoutqueue:  #基于FanoutExchange的消息模型实战(队列)
+        name: ${mq.env}.middleware.mq.yzy.info.fanoutqueue.one  #队列名称
+        name1: ${mq.env}.middleware.mq.yzy.info.fanoutqueue.two  #队列名称
       exchange:
         name: ${mq.env}.middleware.mq.yzy.info.exchange.byte  #交换机名称 字节接受
         name1: ${mq.env}.middleware.mq.yzy.info.exchange.type  #交换机名称 对象接受
+      fanoutExchange:  #基于FanoutExchange的消息模型实战(交换机)
+        name: ${mq.env}.middleware.mq.yzy.info.fanoutExchange
       routing:
         key:
           name: ${mq.env}.middleware.mq.yzy.info.routing.key.byte  #路由名称 字节接受
