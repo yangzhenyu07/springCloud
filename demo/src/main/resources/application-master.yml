@@ -90,15 +90,33 @@ mq:
       fanoutqueue:  #基于FanoutExchange的消息模型实战(队列)
         name: ${mq.env}.middleware.mq.yzy.info.fanoutqueue.one  #队列名称
         name1: ${mq.env}.middleware.mq.yzy.info.fanoutqueue.two  #队列名称
+      topicqueue: #基于TopicExchange的消息模型实战(队列)
+        name: ${mq.env}.middleware.mq.yzy.info.topicqueue.one
+        name1: ${mq.env}.middleware.mq.yzy.info.topicqueue.two
+      directqueue: #基于DirectExchange的消息模型中的队列
+        name: ${mq.env}.middleware.mq.yzy.info.directqueue.one
+        name1: ${mq.env}.middleware.mq.yzy.info.directqueue.two
       exchange:
         name: ${mq.env}.middleware.mq.yzy.info.exchange.byte  #交换机名称 字节接受
         name1: ${mq.env}.middleware.mq.yzy.info.exchange.type  #交换机名称 对象接受
+      directexchange: #基于DirectExchange的消息模型中的交换机
+        name: ${mq.env}.middleware.mq.yzy.info.directexchange.one
       fanoutExchange:  #基于FanoutExchange的消息模型实战(交换机)
         name: ${mq.env}.middleware.mq.yzy.info.fanoutExchange
+      topicexchange: ##基于TopicExchange的消息模型实战(交换机)
+        name: ${mq.env}.middleware.mq.yzy.info.topicexchange.one
       routing:
         key:
           name: ${mq.env}.middleware.mq.yzy.info.routing.key.byte  #路由名称 字节接受
           name1: ${mq.env}.middleware.mq.yzy.info.routing.key.type  #路由名称 对象接受
+      directrouting: #基于DirectExchange的消息模型中的路由
+        key:
+          name: ${mq.env}.middleware.mq.yzy.info.directrouting.key.one
+          name1: ${mq.env}.middleware.mq.yzy.info.directrouting.key.two
+      topicrouting: #基于DirectExchange的消息模型中的路由
+        key:
+          name: ${mq.env}.middleware.mq.yzy.info.topicrouting.*.key
+          name1: ${mq.env}.middleware.mq.yzy.info.topicrouting.#.key
 config:
   rabbitmq:  #多个消费者实例配置，主要针对高并发业务场景配置
     factory:

@@ -19,6 +19,7 @@ import java.util.UUID;
 
 /**
  * 广播消费模型-生产者-字节流模式
+ * 根据指定的交换机，分发到该交换机绑定的所有队列中
  * @author yangzhenyu
  * */
 @Component

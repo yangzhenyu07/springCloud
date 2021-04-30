@@ -17,6 +17,7 @@ import java.util.UUID;
 
 /**
  * 基本消费模型-生产者-字节流模式
+ * 根据交换机和路由 进入指定的队列
  * @author yangzhenyu
  * */
 @Component
