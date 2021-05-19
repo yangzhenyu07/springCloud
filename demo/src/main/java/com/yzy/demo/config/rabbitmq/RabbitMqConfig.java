@@ -52,6 +52,7 @@ public class RabbitMqConfig {
     private SimpleRabbitListenerContainerFactoryConfigurer factoryConfigurer;
     //==================================================================================================================
 
+
     /**
      * 多个消费者实例配置，主要针对高并发业务场景配置
      * */
@@ -63,8 +64,8 @@ public class RabbitMqConfig {
         factoryConfigurer.configure(factory,cachingConnectionFactory);
         //设置消息在传输中的格式，JSON格式
         factory.setMessageConverter(new Jackson2JsonMessageConverter());
-        //设置消息的确认消费模式，在这里为NONE,表示不需要确认消费
-        factory.setAcknowledgeMode(AcknowledgeMode.NONE);
+        //设置消息的确认消费模式，在这里为AUTO,表示自动确认消费
+        factory.setAcknowledgeMode(AcknowledgeMode.AUTO);
         //设置并发消费者实例的初始值
         factory.setConcurrentConsumers(concurrentConsumers);
         //设置并发消费者实例的最大数量
@@ -84,6 +85,8 @@ public class RabbitMqConfig {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         //设置容器工厂所用的实例
         factory.setConnectionFactory(cachingConnectionFactory);
+        //设置消息的确认消费模式，在这里为AUTO,表示自动确认消费
+        factory.setAcknowledgeMode(AcknowledgeMode.AUTO);
         //设置消息在传输中的格式，JSON格式
         factory.setMessageConverter(new Jackson2JsonMessageConverter());
         //设置并发消费者实例的初始值

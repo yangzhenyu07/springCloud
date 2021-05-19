@@ -36,6 +36,7 @@ public class DemoApplication {
 
 		System.out.printf("=================="+ ConfigProcessorUtils.getPropertiesBySingleKey("xxx.hhh")+"==================");
 
+
 	}
 
 }

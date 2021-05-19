@@ -6,6 +6,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.Enumeration;
+import java.util.PropertyResourceBundle;
+
 /**
  * @author yangzhneyu
  * 项目启动预处理2
@@ -16,10 +19,16 @@ import org.springframework.stereotype.Component;
 @Order(2)
 public class StartUpRunnerTwo  implements CommandLineRunner {
     private static Logger log = LoggerFactory.getLogger(StartUpRunnerTwo.class);
-
+    //参数变量配置
+    private static final PropertyResourceBundle params = (PropertyResourceBundle) PropertyResourceBundle.getBundle("params");
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("===================项目启动预处理2===================");
+        log.info("===================项目启动预处理2【抓取参数配置文件测试】===================");
+        Enumeration paramKeys= params.getKeys();
+        while(paramKeys.hasMoreElements()){
+            String key = paramKeys.nextElement().toString();
+            log.info("参数【{}】：{}",key,params.getString(key));
+        }
     }
 }

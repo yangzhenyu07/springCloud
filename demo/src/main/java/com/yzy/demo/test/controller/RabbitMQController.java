@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzy.demo.log.common.BaseLog;
 import com.yzy.demo.rabbitmq.direct.publisher.DirectPublisher;
 import com.yzy.demo.rabbitmq.fanout.publisher.FanoutPublisher;
+import com.yzy.demo.rabbitmq.manual.publisher.ManualPublisher;
 import com.yzy.demo.rabbitmq.test.publisher.SimpleBytePublisher;
 import com.yzy.demo.rabbitmq.test.publisher.SimpleObjectPublisher;
 import com.yzy.demo.rabbitmq.topic.publisher.TopicPublisher;
+import com.yzy.demo.test.vo.Student;
+import com.yzy.demo.test.vo.Teacher;
 import com.yzy.demo.test.vo.User;
 import com.yzy.demo.test.vo.rabbitmq.RabbitMqMsgVo;
 import com.yzy.demo.test.vo.rabbitmq.TopicPublisherVo;
@@ -47,6 +50,9 @@ public class RabbitMQController extends BaseLog {
     //订阅消费模型-生产者
     @Autowired
     private TopicPublisher topicPublisher;
+    //基于manual 机制-人为手动确认消费-生产者
+    @Autowired
+    private ManualPublisher manualPublisher;
     @Autowired
     private ObjectMapper objectMapper;
     /**
@@ -157,6 +163,26 @@ public class RabbitMQController extends BaseLog {
         try{
             //注意:真实环境下要用事件异步驱动的方式发起消息
             topicPublisher.sendMsg(vo.getMsg(),vo.getRoutingKey());
+            endLog(msgValue,startTime);
+        }catch (Exception e){
+            endLogError(msgValue,startTime,e);
+        }
+        return ResponseBo.ok();
+    }
+
+
+    /**
+     * 基于manual 机制-人为手动确认消费
+     * */
+    @ApiOperation(value = "基于manual 机制-人为手动确认消费模式演示",notes = "基于manual 机制-人为手动确认消费模式演示")
+    @ResponseBody
+    @PostMapping("/manual")
+    public ResponseBo manual(@RequestBody @Valid Student vo) throws JsonProcessingException {
+        String msgValue = "topicPublisher";
+        long startTime = init(msgValue,objectMapper.writeValueAsString(vo));
+        try{
+            //注意:真实环境下要用事件异步驱动的方式发起消息
+            manualPublisher.sendAutoMsg(vo);
             endLog(msgValue,startTime);
         }catch (Exception e){
             endLogError(msgValue,startTime,e);
