@@ -96,6 +96,8 @@ mq:
         name1: ${mq.env}.middleware.mq.yzy.info.directqueue.two
       manualqueue: #消息确认模式
         name: ${mq.env}.middleware.mq.yzy.info.manualqueue.one
+      deadqueue: #死信队列
+        name:  ${mq.env}.middleware.mq.yzy.info.deadqueue.one
       exchange:
         name: ${mq.env}.middleware.mq.yzy.info.exchange.byte  #交换机名称 字节接受
         name1: ${mq.env}.middleware.mq.yzy.info.exchange.type  #交换机名称 对象接受
@@ -107,6 +109,10 @@ mq:
         name: ${mq.env}.middleware.mq.yzy.info.topicexchange.one
       manualexchange: #消息确认模式
         name: ${mq.env}.middleware.mq.yzy.info.manualexchange.one
+      deadexchange:  #死信交换机
+        name: ${mq.env}.middleware.mq.yzy.info.deadexchange.one
+        producer: #死信队列模型中基本交换机中的名称
+          name: ${mq.env}.middleware.mq.yzy.info.deadexchange.producer.one
       routing:
         key:
           name: ${mq.env}.middleware.mq.yzy.info.routing.key.byte  #路由名称 字节接受
@@ -122,6 +128,12 @@ mq:
       manualrouting:
         key: #确认模式
           name: ${mq.env}.middleware.mq.yzy.info.manualrouting.key.one
+      deadrouting: #死信路由
+        key:
+          name: ${mq.env}.middleware.mq.yzy.info.deadrouting.key.one
+        producer: #死信消息模型中 基本模型中的路由
+          key:
+            name: ${mq.env}.middleware.mq.yzy.info.deadrouting.producer.key.one
 config:
   rabbitmq:  #多个消费者实例配置，主要针对高并发业务场景配置
     factory:

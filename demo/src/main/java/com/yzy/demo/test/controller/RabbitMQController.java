@@ -3,6 +3,7 @@ package com.yzy.demo.test.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzy.demo.log.common.BaseLog;
+import com.yzy.demo.rabbitmq.dead.publisher.DeadPublisher;
 import com.yzy.demo.rabbitmq.direct.publisher.DirectPublisher;
 import com.yzy.demo.rabbitmq.fanout.publisher.FanoutPublisher;
 import com.yzy.demo.rabbitmq.manual.publisher.ManualPublisher;
@@ -53,8 +54,30 @@ public class RabbitMQController extends BaseLog {
     //基于manual 机制-人为手动确认消费-生产者
     @Autowired
     private ManualPublisher manualPublisher;
+    //死信队列-延迟
+    @Autowired
+    private DeadPublisher deadPublisher;
     @Autowired
     private ObjectMapper objectMapper;
+
+    /**
+     * 死信队列模型演示
+     * */
+    @ApiOperation(value = "死信队列模型演示",notes = "死信队列模型演示")
+    @ResponseBody
+    @PostMapping("/deadPublisher")
+    public ResponseBo deadPublisher(@RequestBody @Valid Student vo) throws JsonProcessingException {
+        String msgValue = "deadPublisher";
+        long startTime = init(msgValue,objectMapper.writeValueAsString(vo));
+        try{
+            deadPublisher.sendMsg(vo);
+            endLog(msgValue,startTime);
+        }catch (Exception e){
+            endLogError(msgValue,startTime,e);
+        }
+        return ResponseBo.ok();
+    }
+
     /**
      * 基本消费模型-生产者-字节流模式
      * */
