@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,6 +52,47 @@ public class RedisController extends BaseLog {
     public long init(String name, String param) {
         this.setClazz("RedisController");
         return startLog(name,param);
+    }
+
+    /**
+     * Redis分布式锁设计
+     * */
+    @ApiOperation(value = "Redis分布式锁设计",notes = "Redis分布式锁设计")
+    @ResponseBody
+    @PostMapping("/lock")
+    public ResponseBo lock(String key)  {
+        String msgValue = "lock";
+        long startTime = init(msgValue,key);
+        ValueOperations stringStringValueOperations = stringRedisTemplate.opsForValue();
+        //value值 纳秒级时间戳+随机数
+        final String value = System.nanoTime()+""+ UUID.randomUUID();
+        try{
+            /**
+             * 调用SETNX操作获取锁，如果返回true ，代表获取锁成功
+             * 代表当前的共享资源还没有被其他线程占据
+             * */
+            Boolean aBoolean = stringStringValueOperations.setIfAbsent(key, value);
+            if (aBoolean){
+                this.info("获取到分布式锁");
+                /**
+                 * 为了防止出现死锁状态，加上EXPIRE操作，即key的过期时间，即20s
+                 * */
+                stringRedisTemplate.expire(key,20L,TimeUnit.SECONDS);
+                this.info("执行业务逻辑");
+            }
+            endLog(msgValue,startTime);
+            return ResponseBo.ok();
+        }catch (Exception e){
+            endLogError(msgValue,startTime,e);
+            return ResponseBo.error("保存失败" + e.getMessage());
+        }finally {
+            /**
+             * 注:访问共享资源结束后要释放锁
+             * */
+            if (value.equals(stringStringValueOperations.get(key).toString())){
+                stringRedisTemplate.delete(key);
+            }
+        }
     }
     /**
      * @Valid 列表

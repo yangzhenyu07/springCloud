@@ -76,7 +76,7 @@ public class DeadExchangeConfig {
         return new TopicExchange(environment.getProperty(DEAD_EXCHANGE),true,false);
     }
 
-    //创建死信路由及其绑定
+    //创建死信路由及其绑定真正的消费队列
     /**
      * @param manualQueue 真正的队列
      * */
