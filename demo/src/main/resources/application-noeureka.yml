@@ -63,9 +63,16 @@ spring:
     post: 5672  #提供服务时的端口
     username: yzy #连接RabbitMQ的账户
     password: yzy #连接RabbitMQ的密码
-  redis:
-    host: 127.0.0.1
-    port: 6379
+redisson:
+  config:
+    host: 127.0.0.1:6379
+    database: 0  #redis索引
+    timeout: 3000 #等待节点回复命令的时间。该时间从命令发送成功时开始计时
+    minIdle: 8  #从节点发布到订阅连接的最小空闲连接数
+    size: 64 #连接池配置数量
+  rbloomfilter:
+    key: redisson.rbloomfilter.key  #布隆过滤器key值
+
 mybatis-plus:
   global-config:
     db-config:

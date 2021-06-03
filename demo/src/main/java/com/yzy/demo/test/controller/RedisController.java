@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yzy.demo.config.redis.RbloomFilterUtil;
 import com.yzy.demo.log.common.BaseLog;
 import com.yzy.demo.test.vo.*;
 import com.yzy.demo.utils.ResponseBo;
@@ -48,12 +49,36 @@ public class RedisController extends BaseLog {
     @Autowired
     private  StringRedisTemplate stringRedisTemplate;
 
+    /**
+     * 布隆过滤器
+     * */
+    @Autowired
+    private RbloomFilterUtil rbloomFilterUtil;
     @Override
     public long init(String name, String param) {
         this.setClazz("RedisController");
         return startLog(name,param);
     }
 
+
+    /**
+     * 布隆过滤器测试
+     * */
+    @ApiOperation(value = "布隆过滤器测试",notes = "布隆过滤器测试")
+    @ResponseBody
+    @PostMapping("/rbloomFilter")
+    public ResponseBo rbloomFilter(String index)  {
+        String msgValue = "rbloomFilter";
+        long startTime = init(msgValue,index);
+        try{
+            String msg = "布隆过滤器过滤结果:"+rbloomFilterUtil.isContains(Long.valueOf(index));
+            endLog(msgValue,startTime);
+            return ResponseBo.ok(msg);
+        }catch (Exception e){
+            endLogError(msgValue,startTime,e);
+            return ResponseBo.error("保存失败" + e.getMessage());
+        }
+    }
     /**
      * Redis分布式锁设计
      * */

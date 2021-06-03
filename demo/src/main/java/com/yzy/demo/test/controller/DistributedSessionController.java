@@ -2,6 +2,7 @@ package com.yzy.demo.test.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yzy.demo.config.redis.RbloomFilterUtil;
 import com.yzy.demo.exception.ExceptionEnum;
 import com.yzy.demo.exception.throwtype.MyException;
 import com.yzy.demo.log.common.BaseLog;
@@ -56,6 +57,11 @@ public class DistributedSessionController  extends BaseLog {
     private ObjectMapper objectMapper;
     @Autowired
     private RedisTemplate redisTemplate;
+    /**
+     * 布隆过滤器
+     * */
+    @Autowired
+    private RbloomFilterUtil rbloomFilterUtil;
     @Override
     public long init(String name, String param) {
         this.setClazz("DistributedSessionController");
@@ -74,11 +80,11 @@ public class DistributedSessionController  extends BaseLog {
     /**
      * 模拟查询数据库
      * */
-    public DistributedSessionVo query(String id){
+    public DistributedSessionVo query(Long id){
         DistributedSessionVo distributedSessionVo = new DistributedSessionVo();
         distributedSessionVo.setName("分布式会话实战书籍");
         distributedSessionVo.setNumber("12");
-        distributedSessionVo.setId(id);
+        distributedSessionVo.setId(String.valueOf(id));
         return distributedSessionVo;
     }
     /**
@@ -87,13 +93,20 @@ public class DistributedSessionController  extends BaseLog {
      */
     @ApiOperation(value="查询热销商品【防缓存雪崩设计】", notes="查询热销商品【防缓存雪崩设计】:")
     @GetMapping(value = "/queryCommodity/{id}")
-    public ResponseBo queryCommodity(@PathVariable  String id) throws JsonProcessingException {
+    public ResponseBo queryCommodity(@PathVariable  Long id) throws JsonProcessingException {
         String msgValue = "queryCommodity";
-        long startTime = init(msgValue,id);
+        long startTime = init(msgValue,String.valueOf(id));
         //不加前缀key值
         final String key =  "commodity_"+id;
         //加前缀key值
         final String headKey = keyHead + key;
+        //【防缓存穿透设计】-布隆过滤器
+        if(!rbloomFilterUtil.isContains(id)){
+            /**
+             * 放进队列里，消费端进行布隆过滤器是否添加操作
+             * */
+            return ResponseBo.ok("布隆过滤器未通过");
+        }
         try{
             ValueOperations valueOperations = redisTemplate.opsForValue();
             if (redisTemplate.hasKey(headKey)){
