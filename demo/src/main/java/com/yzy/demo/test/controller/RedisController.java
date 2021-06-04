@@ -13,6 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.web.bind.annotation.*;
@@ -54,12 +56,84 @@ public class RedisController extends BaseLog {
      * */
     @Autowired
     private RbloomFilterUtil rbloomFilterUtil;
+    @Autowired
+    private RedissonClient redissonClient;
     @Override
     public long init(String name, String param) {
         this.setClazz("RedisController");
         return startLog(name,param);
     }
+    /**
+     * Redission 分布式锁设计(可重入锁)
+     * */
+    @ApiOperation(value = "Redission 分布式锁设计(可重入锁)",notes = "Redission 分布式锁设计(可重入锁)")
+    @ResponseBody
+    @PostMapping("/trylock")
+    public ResponseBo trylock(String key)  {
+        String msgValue = "trylock";
+        long startTime = init(msgValue,key);
+        //分布式锁名称
+        final String lockName = "redissonTryLock-"+key;
+        RLock lock = redissonClient.getLock(lockName);
+        try{
+           //尝试加锁， 最多等待100秒，上锁后10秒自动解锁
+            Boolean aBoolean = lock.tryLock(100,10,TimeUnit.SECONDS);
+            if (aBoolean){
+                this.info("获取到可重入分布式锁");
+                this.info("执行业务逻辑");
+            }
+            endLog(msgValue,startTime);
+            return ResponseBo.ok();
+        }catch (Exception e){
+            endLogError(msgValue,startTime,e);
+            return ResponseBo.error("保存失败" + e.getMessage());
+        }finally {
+            /**
+             * 注:访问共享资源结束后要释放锁
+             * */
+            if (lock!= null){
+                this.info("释放分布式锁");
+                lock.unlock();
+                //注在某些严格的业务场景下，也可以调用强制释放分布式锁的方法
+                //lock.forceUnlock();
+            }
+        }
+    }
 
+    /**
+     * Redission 分布式锁设计(一次性锁)
+     * */
+    @ApiOperation(value = "Redission 分布式锁设计(一次性锁)",notes = "Redission 分布式锁设计(一次性锁)")
+    @ResponseBody
+    @PostMapping("/onelock")
+    public ResponseBo onelock(String key)  {
+        String msgValue = "onelock";
+        long startTime = init(msgValue,key);
+        //分布式锁名称
+        final String lockName = "redissonOneLock-"+key;
+        RLock lock = redissonClient.getLock(lockName);
+        try{
+            //尝试加锁， 上锁后10秒自动解锁
+            lock.lock(10,TimeUnit.SECONDS);
+            this.info("获取到一次性分布式锁");
+            this.info("执行业务逻辑");
+            endLog(msgValue,startTime);
+            return ResponseBo.ok();
+        }catch (Exception e){
+            endLogError(msgValue,startTime,e);
+            return ResponseBo.error("保存失败" + e.getMessage());
+        }finally {
+            /**
+             * 注:访问共享资源结束后要释放锁
+             * */
+            if (lock!= null){
+                this.info("释放分布式锁");
+                lock.unlock();
+                //注在某些严格的业务场景下，也可以调用强制释放分布式锁的方法
+                //lock.forceUnlock();
+            }
+        }
+    }
 
     /**
      * 布隆过滤器测试
