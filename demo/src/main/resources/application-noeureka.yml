@@ -18,6 +18,56 @@ spring:
       max-request-size: 20MB
   session:           #session 超时设置
     timeout: 1800
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092 #你kafka服务器地址
+    listener:
+      missing-topics-fatal: false # 消费端监听的topic不存在时，项目启动会报错(关掉)
+      ack-mode: manual_immediate # 配置监听手动提交 ack ,消费一条数据完后，立即提交
+    #生产者的配置，大部分我们可以使用默认的，这里列出几个比较重要的属性
+    producer:
+      #每批次发送消息的数量
+      batch-size: 16
+      #设置大于0的值将使客户端重新发送任何数据，一旦这些数据发送失败。
+      #注意，这些重试与客户端接收到发送错误时的重试没有什么不同。允许重试将潜在的改变数据的顺序，
+      #如果这两个消息记录都是发送到同一个partition，则第一个消息失败第二个发送成功，则第二条消息会比第一条消息出现要早。
+      properties:
+        partitioner:
+          class: com.yzy.demo.kafka.partitioner.CustomizePartitioner  #自定义分区
+        linger:
+          ms: 0 # 当生产端积累的消息达到batch-size或接收到消息linger.ms后,生产者就会将消息提交给kafka ,当linger.ms为0表示每接收到一条消息就提交给kafka,这时候batch-size其实就没用了
+      retries: 0
+      #producer可以用来缓存数据的内存大小。如果数据产生速度大于向broker发送的速度，
+      #producer会阻塞或者抛出异常，以“block.on.buffer.full”来表明。
+      #这项设置将和producer能够使用的总内存相关，但并不是一个硬性的限制，
+      #因为不是producer使用的所有内存都是用于缓存。一些额外的内存会用于压缩（如果引入压缩机制），同样还有一些用于维护请求。
+      buffer-memory: 33554432
+      acks: all
+      #key序列化方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #消费者的配置
+    consumer:
+      properties:
+        session:
+          timeout:
+            ms: 120000 # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
+        request:
+          timeout:
+            ms: 180000 # 消费请求超时时间
+      # 当kafka中没有初始offset或offset超出范围时将自动重置offset
+      # earliest:重置为分区中最小的offset;
+      # latest:重置为分区中最新的offset(消费分区中新产生的数据);
+      # none:只要有一个分区不存在已提交的offset,就抛出异常;      auto-offset-reset: latest
+      #是否开启自动提交
+      enable-auto-commit: false
+      #自动提交的时间间隔
+      auto-commit-interval: 100
+      #key的解码方式
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #value的解码方式
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #在/usr/local/etc/kafka/consumer.properties中有配置
+      group-id: yzy #【你自己配置的】
   sgrain: #异步线程池
     async-thread-pool:
       enable: true  #异步线程池组件开关，默认false

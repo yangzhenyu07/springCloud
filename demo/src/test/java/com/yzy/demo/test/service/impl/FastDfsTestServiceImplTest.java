@@ -72,6 +72,10 @@ public class FastDfsTestServiceImplTest {
         //File file1 = PowerMockito.mock(File.class);
         //PowerMockito.whenNew(File.class).withArguments(file).thenReturn(file1);
         //PowerMockito.when(file1.exists()).thenReturn(true);
+        /**
+         * 不返回任何值
+         * */
+        //PowerMockito.doNothing().when();
         //=============end=================
         //=============start=================
         /**
